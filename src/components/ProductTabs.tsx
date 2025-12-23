@@ -1,56 +1,56 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Card, CardContent } from './ui/card';
 
-export function ProductTabs() {
+export function ProductTabs({ product }: { product: any }) {
+  if (!product) return null;
+
   return (
     <div className="mb-12">
       <Tabs defaultValue="description" className="w-full">
         <TabsList className="grid w-full grid-cols-3 bg-amber-50 border border-amber-200">
-          <TabsTrigger 
+          <TabsTrigger
             value="description"
             className="data-[state=active]:bg-amber-600 data-[state=active]:text-white"
           >
             Description
           </TabsTrigger>
-          <TabsTrigger 
+          <TabsTrigger
             value="ingredients"
             className="data-[state=active]:bg-amber-600 data-[state=active]:text-white"
           >
             Ingredients & Nutrition
           </TabsTrigger>
-          <TabsTrigger 
+          <TabsTrigger
             value="reviews"
             className="data-[state=active]:bg-amber-600 data-[state=active]:text-white"
           >
             Reviews
           </TabsTrigger>
         </TabsList>
-        
+
         <TabsContent value="description" className="mt-6">
           <Card className="border-amber-200">
             <CardContent className="p-6 space-y-4">
               <div>
                 <h3 className="text-2xl text-amber-900 mb-3" style={{ fontFamily: 'Georgia, serif' }}>
-                  The Story Behind Our Murukku
+                  The Story Behind Our {product.name}
                 </h3>
                 <p className="text-gray-700 leading-relaxed">
-                  Our Traditional Murukku is crafted using a centuries-old recipe passed down through 
-                  generations in the heart of Tamil Nadu. Each spiral is hand-twisted by skilled artisans 
-                  who have perfected this art over decades.
+                  {product.longDescription || product.description || "Experience the authentic taste of tradition."}
                 </p>
               </div>
-              
+
               <div>
                 <h4 className="text-lg text-amber-800 mb-2">Heritage Recipe</h4>
                 <p className="text-gray-700 leading-relaxed">
-                  Made with premium rice flour, urad dal, and a secret blend of traditional spices, 
-                  our murukku delivers the authentic taste of South Indian households. The dough is 
-                  prepared fresh daily and shaped using traditional brass murukku makers.
+                  Made with premium ingredients and a secret blend of traditional spices,
+                  our {product.name.toLowerCase()} delivers the authentic taste of South Indian households.
+                  Prepared fresh and shaped using traditional methods.
                 </p>
               </div>
-              
+
               <div>
-                <h4 className="text-lg text-amber-800 mb-2">Why Choose Our Murukku?</h4>
+                <h4 className="text-lg text-amber-800 mb-2">Why Choose Our {product.name}?</h4>
                 <ul className="space-y-2 text-gray-700">
                   <li>• 100% natural ingredients with no artificial preservatives</li>
                   <li>• Handmade in small batches for freshness</li>
@@ -62,7 +62,7 @@ export function ProductTabs() {
             </CardContent>
           </Card>
         </TabsContent>
-        
+
         <TabsContent value="ingredients" className="mt-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Card className="border-amber-200">
@@ -70,145 +70,116 @@ export function ProductTabs() {
                 <h3 className="text-xl text-amber-900 mb-4" style={{ fontFamily: 'Georgia, serif' }}>
                   Ingredients
                 </h3>
-                <ul className="space-y-2 text-gray-700">
-                  <li>• Rice flour (60%)</li>
-                  <li>• Black gram flour (Urad dal) (20%)</li>
-                  <li>• Sesame seeds (5%)</li>
-                  <li>• Cumin seeds (3%)</li>
-                  <li>• Asafoetida (Hing)</li>
-                  <li>• Red chili powder</li>
-                  <li>• Turmeric powder</li>
-                  <li>• Salt</li>
-                  <li>• Sunflower oil</li>
-                  <li>• Curry leaves</li>
-                </ul>
+                {product.ingredients && product.ingredients.length > 0 ? (
+                  <ul className="space-y-2 text-gray-700">
+                    {product.ingredients.map((ingredient: string, index: number) => (
+                      <li key={index}>• {ingredient}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-gray-600">Ingredients information coming soon.</p>
+                )}
               </CardContent>
             </Card>
-            
+
             <Card className="border-amber-200">
               <CardContent className="p-6">
                 <h3 className="text-xl text-amber-900 mb-4" style={{ fontFamily: 'Georgia, serif' }}>
                   Nutritional Information
                 </h3>
                 <div className="text-sm text-gray-600 mb-3">Per 100g serving</div>
-                <div className="space-y-2 text-gray-700">
-                  <div className="flex justify-between">
-                    <span>Energy</span>
-                    <span>456 kcal</span>
+                {product.nutrition ? (
+                  <div className="space-y-2 text-gray-700">
+                    {Object.entries(product.nutrition).map(([key, value]) => (
+                      <div className="flex justify-between" key={key}>
+                        <span className="capitalize">{key}</span>
+                        <span>{value as string}</span>
+                      </div>
+                    ))}
                   </div>
-                  <div className="flex justify-between">
-                    <span>Protein</span>
-                    <span>12.8g</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Carbohydrates</span>
-                    <span>58.4g</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Fat</span>
-                    <span>18.6g</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Fiber</span>
-                    <span>3.2g</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Sodium</span>
-                    <span>856mg</span>
-                  </div>
-                </div>
+                ) : (
+                  <p className="text-gray-600">Nutritional information coming soon.</p>
+                )}
               </CardContent>
             </Card>
           </div>
         </TabsContent>
-        
+
         <TabsContent value="reviews" className="mt-6">
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <Card className="border-amber-200">
                 <CardContent className="p-6 text-center">
-                  <div className="text-3xl text-amber-600 mb-2">4.8</div>
+                  <div className="text-3xl text-amber-600 mb-2">{product.rating}</div>
                   <div className="flex justify-center gap-1 mb-2">
                     {[...Array(5)].map((_, i) => (
-                      <span key={i} className="text-amber-400">★</span>
+                      <span key={i} className={`text-lg ${i < Math.floor(product.rating || 0) ? 'text-amber-400' : 'text-gray-300'}`}>★</span>
                     ))}
                   </div>
-                  <div className="text-sm text-gray-600">Based on 127 reviews</div>
+                  <div className="text-sm text-gray-600">Based on {product.reviews} reviews</div>
                 </CardContent>
               </Card>
-              
+
               <Card className="border-amber-200 md:col-span-2">
                 <CardContent className="p-6">
+                  {/* Placeholder for rating bars, logic can be added later or mocked based on rating */}
                   <div className="space-y-3">
-                    {[5, 4, 3, 2, 1].map((stars) => (
-                      <div key={stars} className="flex items-center gap-3">
-                        <span className="text-sm w-8">{stars}★</span>
-                        <div className="flex-1 bg-gray-200 rounded-full h-2">
-                          <div 
-                            className="bg-amber-500 h-2 rounded-full"
-                            style={{ width: `${stars === 5 ? 75 : stars === 4 ? 20 : stars === 3 ? 3 : stars === 2 ? 1 : 1}%` }}
-                          ></div>
+                    {[5, 4, 3, 2, 1].map((stars) => {
+                      // Mock distribution roughly based on rating
+                      const isHigh = product.rating >= 4.5;
+                      const percentage = stars === 5 ? (isHigh ? 80 : 40) : stars === 4 ? (isHigh ? 15 : 30) : 5;
+                      return (
+                        <div key={stars} className="flex items-center gap-3">
+                          <span className="text-sm w-8">{stars}★</span>
+                          <div className="flex-1 bg-gray-200 rounded-full h-2">
+                            <div
+                              className="bg-amber-500 h-2 rounded-full"
+                              style={{ width: `${percentage}%` }}
+                            ></div>
+                          </div>
+                          <span className="text-sm text-gray-600 w-8">
+                            {percentage}%
+                          </span>
                         </div>
-                        <span className="text-sm text-gray-600 w-8">
-                          {stars === 5 ? '95' : stars === 4 ? '25' : stars === 3 ? '4' : stars === 2 ? '2' : '1'}
-                        </span>
-                      </div>
-                    ))}
+                      )
+                    })}
                   </div>
                 </CardContent>
               </Card>
             </div>
-            
+
             <div className="space-y-4">
-              {[
-                {
-                  name: "Priya Sharma",
-                  rating: 5,
-                  date: "2 days ago",
-                  comment: "Absolutely authentic taste! Reminds me of my grandmother's murukku. The texture is perfect - crispy and not too oily.",
-                  verified: true
-                },
-                {
-                  name: "Rajesh Kumar",
-                  rating: 5,
-                  date: "1 week ago", 
-                  comment: "Best murukku I've had outside of Tamil Nadu. Great packaging and arrived fresh. Will definitely order again!",
-                  verified: true
-                },
-                {
-                  name: "Anitha R",
-                  rating: 4,
-                  date: "2 weeks ago",
-                  comment: "Good quality and taste. Slightly less spicy than expected but still very good. Fast delivery.",
-                  verified: false
-                }
-              ].map((review, index) => (
-                <Card key={index} className="border-amber-200">
-                  <CardContent className="p-6">
-                    <div className="flex justify-between items-start mb-3">
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <h4 className="text-amber-900">{review.name}</h4>
-                          {review.verified && (
-                            <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
-                              Verified Purchase
-                            </span>
-                          )}
-                        </div>
-                        <div className="flex items-center gap-2 mt-1">
-                          <div className="flex gap-1">
-                            {[...Array(5)].map((_, i) => (
-                              <span key={i} className={`text-sm ${i < review.rating ? 'text-amber-400' : 'text-gray-300'}`}>★</span>
-                            ))}
+              {product.reviewsList && product.reviewsList.length > 0 ? (
+                product.reviewsList.map((review: any, index: number) => (
+                  <Card key={index} className="border-amber-200">
+                    <CardContent className="p-6">
+                      <div className="flex justify-between items-start mb-3">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <h4 className="text-amber-900">{review.name}</h4>
+                            {review.verified && (
+                              <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
+                                Verified Purchase
+                              </span>
+                            )}
                           </div>
-                          <span className="text-sm text-gray-500">{review.date}</span>
+                          <div className="flex items-center gap-2 mt-1">
+                            <div className="flex gap-1">
+                              {[...Array(5)].map((_, i) => (
+                                <span key={i} className={`text-sm ${i < review.rating ? 'text-amber-400' : 'text-gray-300'}`}>★</span>
+                              ))}
+                            </div>
+                            <span className="text-sm text-gray-500">{review.date}</span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <p className="text-gray-700">{review.comment}</p>
-                  </CardContent>
-                </Card>
-              ))}
+                      <p className="text-gray-700">{review.comment}</p>
+                    </CardContent>
+                  </Card>
+                ))
+              ) : (
+                <p className="text-gray-600 text-center py-4">No reviews yet.</p>
+              )}
             </div>
           </div>
         </TabsContent>

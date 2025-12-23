@@ -4,7 +4,7 @@ import { Card, CardContent } from './ui/card';
 import { Badge } from './ui/badge';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { motion, useInView, type Variants } from 'motion/react';
-import { useRef, useMemo } from 'react';
+import { useRef, useMemo, useState, useEffect } from 'react';
 
 interface HomePageProps {
   onNavigate: (page: string, productId?: string) => void;
@@ -13,8 +13,8 @@ interface HomePageProps {
 // Animation variants defined outside component to prevent recreation
 const fadeInUp: Variants = {
   hidden: { opacity: 0, y: 30 },
-  visible: { 
-    opacity: 1, 
+  visible: {
+    opacity: 1,
     y: 0,
     transition: { duration: 0.6, ease: [0.4, 0, 0.2, 1] }
   }
@@ -33,67 +33,38 @@ const staggerContainer: Variants = {
 
 const scaleIn: Variants = {
   hidden: { opacity: 0, scale: 0.9 },
-  visible: { 
-    opacity: 1, 
+  visible: {
+    opacity: 1,
     scale: 1,
     transition: { duration: 0.5, ease: [0.4, 0, 0.2, 1] }
   }
 };
 
 export function HomePage({ onNavigate }: HomePageProps) {
-  const featuredProducts = useMemo(() => [
-    {
-      id: 1,
-      name: "Traditional Murukku",
-      price: 299,
-      originalPrice: 349,
-      image: "https://images.unsplash.com/photo-1680359939304-7e27ee183e7a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx0cmFkaXRpb25hbCUyMGluZGlhbiUyMHNuYWNrcyUyMG11cnVra3V8ZW58MXx8fHwxNzU4NzM3NzY1fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      rating: 4.8,
-      reviews: 127,
-      featured: true
-    },
-    {
-      id: 2,
-      name: "Heritage Mixture",
-      price: 199,
-      originalPrice: 229,
-      image: "https://images.unsplash.com/photo-1616813769023-d0557572ddbe?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx0cmFkaXRpb25hbCUyMGluZGlhbiUyMG5hbWtlZW4lMjBzbmFja3N8ZW58MXx8fHwxNzU4ODExMTI4fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      rating: 4.6,
-      reviews: 89,
-      featured: false
-    },
-    {
-      id: 3,
-      name: "Traditional Sweets Box",
-      price: 599,
-      originalPrice: 699,
-      image: "https://images.unsplash.com/photo-1723937188995-beac88d36998?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxpbmRpYW4lMjB0cmFkaXRpb25hbCUyMHN3ZWV0cyUyMHZhcmlldHl8ZW58MXx8fHwxNzU4ODExMTI5fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      rating: 4.9,
-      reviews: 156,
-      featured: true
-    },
-    {
-      id: 4,
-      name: "Spice Collection",
-      price: 449,
-      originalPrice: 499,
-      image: "https://images.unsplash.com/photo-1663325265966-0d17de3e85c5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxpbmRpYW4lMjBzcGljZXMlMjBtYXJrZXRwbGFjZXxlbnwxfHx8fDE3NTg4MTExMjh8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      rating: 4.7,
-      reviews: 78,
-      featured: false
-    }
-  ], []);
+  const [featuredProducts, setFeaturedProducts] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetch('/products.json')
+      .then(res => res.json())
+      .then(data => {
+        if (data.products) {
+          // Select some products to feature, e.g., the first 4
+          setFeaturedProducts(data.products.slice(0, 4).map((p: any) => ({ ...p, featured: p.id === 1 || p.id === 3 })));
+        }
+      })
+      .catch(err => console.error('Error fetching products:', err));
+  }, []);
 
   const categories = useMemo(() => [
     {
       name: "Traditional Snacks",
       count: "25+ items",
-      image: "https://images.unsplash.com/photo-1680359939304-7e27ee183e7a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx0cmFkaXRpb25hbCUyMGluZGlhbiUyMHNuYWNrcyUyMG11cnVra3V8ZW58MXx8fHwxNzU4NzM3NzY1fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
+      image: "https://images.unsplash.com/photo-1680359939304-7e27ee183e7a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx0cmFkaXRpb25hbCUyMGluZGlhbiUyMG11cnVra3V8ZW58MXx8fHwxNzU4NzM3NzY1fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
     },
     {
       name: "Festive Sweets",
-      count: "18+ items", 
-      image: "https://images.unsplash.com/photo-1723937188995-beac88d36998?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxpbmRpYW4lMjB0cmFkaXRpb25hbCUyMHN3ZWV0cyUyMHZhcmlldHl8ZW58MXx8fHwxNzU4ODExMTI5fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
+      count: "18+ items",
+      image: "https://images.unsplash.com/photo-1723937188995-beac88d36998?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxpbmRpYW4lMjB0cmFkaXRpb25hbCUyMHN3ZWV0cyUyMHZhcmlldHl8ZW58MXx8fHwxNzU4ODExMTI9fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
     },
     {
       name: "Spice Blends",
@@ -122,7 +93,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
       <section className="relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <motion.div 
+            <motion.div
               className="space-y-8"
               initial="hidden"
               animate="visible"
@@ -134,45 +105,45 @@ export function HomePage({ onNavigate }: HomePageProps) {
                     Heritage Since 1952
                   </Badge>
                 </motion.div> */}
-                <motion.h1 
-                  className="text-4xl lg:text-6xl text-amber-900 leading-tight" 
+                <motion.h1
+                  className="text-4xl lg:text-6xl text-amber-900 leading-tight"
                   style={{ fontFamily: 'Georgia, serif' }}
                   variants={fadeInUp}
                 >
-                  Authentic Indian Flavors, 
+                  Authentic Indian Flavors,
                   <span className="text-orange-600"> Delivered Fresh</span>
                 </motion.h1>
-                <motion.p 
+                <motion.p
                   className="text-xl text-gray-700 leading-relaxed"
                   variants={fadeInUp}
                 >
-                  Experience the rich heritage of traditional South Indian snacks, crafted with 
+                  Experience the rich heritage of traditional South Indian snacks, crafted with
                   love using time-honored recipes passed down through generations.
                 </motion.p>
               </div>
-              
-              <motion.div 
+
+              <motion.div
                 className="flex flex-col sm:flex-row gap-4"
                 variants={fadeInUp}
               >
-                <Button 
-                  size="lg" 
+                <Button
+                  size="lg"
                   className="bg-amber-600 hover:bg-amber-700 text-white"
                   onClick={() => onNavigate('products')}
                 >
                   Shop Now
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
-                <Button 
-                  size="lg" 
-                  variant="outline" 
+                <Button
+                  size="lg"
+                  variant="outline"
                   className="border-amber-600 text-amber-600 hover:bg-amber-50"
                 >
                   Our Story
                 </Button>
               </motion.div>
 
-              <motion.div 
+              <motion.div
                 className="grid grid-cols-3 gap-6"
                 variants={fadeInUp}
               >
@@ -191,7 +162,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
               </motion.div>
             </motion.div>
 
-            <motion.div 
+            <motion.div
               className="relative"
               initial={{ opacity: 0, x: 30 }}
               animate={{ opacity: 1, x: 0 }}
@@ -219,7 +190,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
       {/* Categories Section */}
       <section ref={categoriesRef} className="py-16 bg-white/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div 
+          <motion.div
             className="text-center mb-12"
             initial={{ opacity: 0, y: 20 }}
             animate={categoriesInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
@@ -233,7 +204,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
             </p>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
             initial="hidden"
             animate={categoriesInView ? "visible" : "hidden"}
@@ -241,7 +212,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
           >
             {categories.map((category, index) => (
               <motion.div key={index} variants={scaleIn}>
-                <Card 
+                <Card
                   className="group border-amber-200 hover:shadow-lg transition-all duration-300 cursor-pointer hover:scale-105"
                   onClick={() => onNavigate('products')}
                 >
@@ -271,7 +242,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
       {/* Featured Products */}
       <section ref={productsRef} className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div 
+          <motion.div
             className="text-center mb-12"
             initial={{ opacity: 0, y: 20 }}
             animate={productsInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
@@ -285,7 +256,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
             </p>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"
             initial="hidden"
             animate={productsInView ? "visible" : "hidden"}
@@ -293,7 +264,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
           >
             {featuredProducts.map((product) => (
               <motion.div key={product.id} variants={scaleIn}>
-                <Card 
+                <Card
                   className="group border-amber-200 hover:shadow-lg transition-all duration-300 cursor-pointer hover:scale-105"
                   onClick={() => onNavigate('product', product.id.toString())}
                 >
@@ -310,7 +281,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
                         className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
                       />
                     </div>
-                    
+
                     <div className="p-6 space-y-4">
                       <div>
                         <h3 className="text-lg text-amber-900 group-hover:text-amber-600 transition-colors mb-2">
@@ -319,8 +290,8 @@ export function HomePage({ onNavigate }: HomePageProps) {
                         <div className="flex items-center gap-2">
                           <div className="flex items-center gap-1">
                             {[...Array(5)].map((_, i) => (
-                              <Star 
-                                key={i} 
+                              <Star
+                                key={i}
                                 className={`w-4 h-4 ${i < Math.floor(product.rating) ? 'text-amber-400 fill-current' : 'text-gray-300'}`}
                               />
                             ))}
@@ -328,14 +299,14 @@ export function HomePage({ onNavigate }: HomePageProps) {
                           <span className="text-sm text-gray-600">({product.reviews})</span>
                         </div>
                       </div>
-                      
+
                       <div className="space-y-3">
                         <div className="flex items-center gap-2">
                           <span className="text-xl text-amber-900">SGD{product.price}</span>
                           <span className="text-sm text-gray-500 line-through">SGD{product.originalPrice}</span>
                         </div>
-                        
-                        <Button 
+
+                        <Button
                           className="w-full bg-amber-600 hover:bg-amber-700 text-white transition-colors"
                           size="sm"
                         >
@@ -349,15 +320,15 @@ export function HomePage({ onNavigate }: HomePageProps) {
             ))}
           </motion.div>
 
-          <motion.div 
+          <motion.div
             className="text-center mt-12"
             initial={{ opacity: 0, y: 20 }}
             animate={productsInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{ duration: 0.6, delay: 0.4 }}
           >
-            <Button 
-              size="lg" 
-              variant="outline" 
+            <Button
+              size="lg"
+              variant="outline"
               className="border-amber-600 text-amber-600 hover:bg-amber-50"
               onClick={() => onNavigate('products')}
             >
@@ -371,7 +342,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
       {/* Trust Indicators */}
       <section ref={trustRef} className="py-16 bg-amber-900 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div 
+          <motion.div
             className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center"
             initial="hidden"
             animate={trustInView ? "visible" : "hidden"}
@@ -384,7 +355,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
               <h3 className="text-xl">Free Shipping</h3>
               <p className="text-amber-200">On orders above ₹499</p>
             </motion.div>
-            
+
             <motion.div className="space-y-3" variants={fadeInUp}>
               <div className="inline-flex items-center justify-center w-16 h-16 bg-amber-700 rounded-full">
                 <Award className="w-8 h-8" />
@@ -392,7 +363,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
               <h3 className="text-xl">Quality Assured</h3>
               <p className="text-amber-200">FSSAI certified products</p>
             </motion.div>
-            
+
             <motion.div className="space-y-3" variants={fadeInUp}>
               <div className="inline-flex items-center justify-center w-16 h-16 bg-amber-700 rounded-full">
                 <Users className="w-8 h-8" />
@@ -400,7 +371,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
               <h3 className="text-xl">50k+ Customers</h3>
               <p className="text-amber-200">Trusted nationwide</p>
             </motion.div>
-            
+
             <motion.div className="space-y-3" variants={fadeInUp}>
               <div className="inline-flex items-center justify-center w-16 h-16 bg-amber-700 rounded-full">
                 <Star className="w-8 h-8" />

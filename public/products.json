@@ -1,0 +1,145 @@
+{
+    "products": [
+        {
+            "id": 2,
+            "name": "Traditional Mixture",
+            "price": 279,
+            "originalPrice": 329,
+            "image": "/product_1.jpeg",
+            "rating": 4.7,
+            "reviews": 142,
+            "category": "Traditional Snacks",
+            "isNew": false,
+            "inStock": true,
+            "description": "Spicy South Indian mixture with peanuts, sev, and aromatic spices",
+            "longDescription": "Our Traditional Mixture is a beloved South Indian snack prepared using a balanced blend of crispy sev, roasted peanuts, fried lentils, and curry leaves. Made fresh in small batches, it delivers the perfect harmony of crunch, spice, and aroma that makes it ideal for tea-time or festive sharing.",
+            "ingredients": [
+                "Gram flour sev (40%)",
+                "Roasted peanuts (25%)",
+                "Fried chana dal (10%)",
+                "Rice flakes",
+                "Curry leaves",
+                "Red chili powder",
+                "Asafoetida (Hing)",
+                "Salt",
+                "Sunflower oil"
+            ],
+            "nutrition": {
+                "energy": "482 kcal",
+                "protein": "11.4g",
+                "carbs": "52.6g",
+                "fat": "21.8g",
+                "fiber": "4.1g",
+                "sodium": "912mg"
+            },
+            "reviewsList": [
+                {
+                    "name": "Suresh V",
+                    "rating": 5,
+                    "date": "3 days ago",
+                    "comment": "Perfectly spicy and super crunchy. Tastes exactly like the mixture we get in traditional snack shops.",
+                    "verified": true
+                },
+                {
+                    "name": "Meenakshi Iyer",
+                    "rating": 4,
+                    "date": "1 week ago",
+                    "comment": "Fresh and flavorful. Loved the peanuts and curry leaf aroma.",
+                    "verified": true
+                }
+            ]
+        },
+        {
+            "id": 3,
+            "name": "Sival",
+            "price": 259,
+            "originalPrice": 309,
+            "image": "/product_2.jpeg",
+            "rating": 4.6,
+            "reviews": 98,
+            "category": "Traditional Snacks",
+            "isNew": true,
+            "inStock": true,
+            "description": "Thin, crispy rice flour snack lightly spiced for everyday crunch",
+            "longDescription": "Sival is a light and crispy South Indian snack made from finely ground rice flour and subtle spices. Known for its delicate texture and mild seasoning, it is perfect for those who enjoy less oily, less spicy snacks without compromising on crunch and freshness.",
+            "ingredients": [
+                "Rice flour (70%)",
+                "Gram flour (15%)",
+                "Cumin seeds",
+                "Asafoetida (Hing)",
+                "Salt",
+                "Sunflower oil"
+            ],
+            "nutrition": {
+                "energy": "438 kcal",
+                "protein": "9.6g",
+                "carbs": "61.2g",
+                "fat": "16.4g",
+                "fiber": "2.8g",
+                "sodium": "768mg"
+            },
+            "reviewsList": [
+                {
+                    "name": "Karthik M",
+                    "rating": 5,
+                    "date": "5 days ago",
+                    "comment": "Very light and crispy. Not too spicy, perfect for kids and elders.",
+                    "verified": true
+                },
+                {
+                    "name": "Lavanya S",
+                    "rating": 4,
+                    "date": "2 weeks ago",
+                    "comment": "Fresh and tasty. Goes really well with evening tea.",
+                    "verified": false
+                }
+            ]
+        },
+        {
+            "id": 4,
+            "name": "Omapodi",
+            "price": 269,
+            "originalPrice": 319,
+            "image": "/product_3.jpeg",
+            "rating": 4.9,
+            "reviews": 164,
+            "category": "Traditional Snacks",
+            "isNew": false,
+            "inStock": true,
+            "description": "Classic crispy omapodi made with gram flour and ajwain",
+            "longDescription": "Our Omapodi is prepared using premium gram flour and aromatic ajwain (omam), fried to golden perfection for a crisp, melt-in-the-mouth texture. A timeless South Indian favorite, it can be enjoyed on its own or paired with sweets during festivals.",
+            "ingredients": [
+                "Gram flour (Besan) (75%)",
+                "Rice flour (10%)",
+                "Ajwain (Omam)",
+                "Asafoetida (Hing)",
+                "Salt",
+                "Sunflower oil"
+            ],
+            "nutrition": {
+                "energy": "468 kcal",
+                "protein": "13.2g",
+                "carbs": "49.8g",
+                "fat": "20.1g",
+                "fiber": "3.6g",
+                "sodium": "834mg"
+            },
+            "reviewsList": [
+                {
+                    "name": "Ramesh N",
+                    "rating": 5,
+                    "date": "1 day ago",
+                    "comment": "Excellent quality and very crisp. The ajwain flavor is spot on.",
+                    "verified": true
+                },
+                {
+                    "name": "Deepa Krishnan",
+                    "rating": 5,
+                    "date": "4 days ago",
+                    "comment": "Best omapodi I've ordered online. Not oily and very fresh.",
+                    "verified": true
+                }
+            ]
+        }
+    ]
+}

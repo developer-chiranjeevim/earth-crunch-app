@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Checkbox } from './ui/checkbox';
 import { Slider } from './ui/slider';
 import { ImageWithFallback } from './figma/ImageWithFallback';
-import { projectId } from '../utils/supabase/info.tsx';
+
 import { motion, useInView, type Variants } from 'motion/react';
 
 interface ProductsPageProps {
@@ -17,8 +17,8 @@ interface ProductsPageProps {
 // Animation variants defined outside component
 const fadeInUp: Variants = {
   hidden: { opacity: 0, y: 20 },
-  visible: { 
-    opacity: 1, 
+  visible: {
+    opacity: 1,
     y: 0,
     transition: { duration: 0.4, ease: [0.4, 0, 0.2, 1] }
   }
@@ -41,7 +41,7 @@ export function ProductsPage({ onNavigate }: ProductsPageProps) {
   const [products, setProducts] = useState<any[]>([]);
   // const [loading, setLoading] = useState(true);
 
-  const baseUrl = `https://${projectId}.supabase.co/functions/v1/make-server-b5b6229b`;
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     loadProducts();
@@ -49,131 +49,32 @@ export function ProductsPage({ onNavigate }: ProductsPageProps) {
 
   const loadProducts = async () => {
     try {
-      const response = await fetch(`${baseUrl}/products`);
+      console.log('Fetching products from /products.json...');
+      const response = await fetch('/products.json');
+      console.log('Response status:', response.status);
+
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        console.error("Received non-JSON response:", contentType);
+        const text = await response.text();
+        console.error("Response body prefix:", text.substring(0, 100));
+        throw new Error("Invalid content type: " + contentType);
+      }
+
       const data = await response.json();
-      
+      console.log('Products data:', data);
+
       if (response.ok && data.products) {
-        // If backend has products, use them
-        setProducts(data.products.length > 0 ? data.products : getDefaultProducts());
+        setProducts(data.products);
       } else {
-        // Fallback to default products
-        setProducts(getDefaultProducts());
+        console.error('Failed to load products');
+        setError('Failed to load products');
       }
     } catch (error) {
       console.error('Error loading products:', error);
-      // Fallback to default products on error
-      setProducts(getDefaultProducts());
-    } finally {
-      // setLoading(false);
+      setError(error instanceof Error ? error.message : 'Unknown error');
     }
   };
-
-  const getDefaultProducts = () => [
-    {
-      id: '1',
-      name: "Traditional Murukku",
-      price: 299,
-      originalPrice: 349,
-      image: "https://images.unsplash.com/photo-1680359939304-7e27ee183e7a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx0cmFkaXRpb25hbCUyMGluZGlhbiUyMHNuYWNrcyUyMG11cnVra3V8ZW58MXx8fHwxNzU4NzM3NzY1fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      rating: 4.8,
-      reviews: 127,
-      category: "Traditional Snacks",
-      isNew: false,
-      inStock: true,
-      description: "Crispy spiral snack made with rice flour and traditional spices"
-    },
-    {
-      id: '2',
-      name: "Heritage Mixture",
-      price: 199,
-      originalPrice: 229,
-      image: "https://images.unsplash.com/photo-1616813769023-d0557572ddbe?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx0cmFkaXRpb25hbCUyMGluZGlhbiUyMG5hbWtlZW4lMjBzbmFja3N8ZW58MXx8fHwxNzU4ODExMTI4fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      rating: 4.6,
-      reviews: 89,
-      category: "Namkeen",
-      isNew: false,
-      inStock: true,
-      description: "Assorted mix of crispy lentil snacks with curry leaves"
-    },
-    {
-      id: '3',
-      name: "Traditional Sweets Box",
-      price: 599,
-      originalPrice: 699,
-      image: "https://images.unsplash.com/photo-1723937188995-beac88d36998?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxpbmRpYW4lMjB0cmFkaXRpb25hbCUyMHN3ZWV0cyUyMHZhcmlldHl8ZW58MXx8fHwxNzU4ODExMTI5fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      rating: 4.9,
-      reviews: 156,
-      category: "Sweets",
-      isNew: true,
-      inStock: true,
-      description: "Assorted traditional Indian sweets perfect for festivals"
-    },
-    {
-      id: '4',
-      name: "Spice Collection",
-      price: 449,
-      originalPrice: 499,
-      image: "https://images.unsplash.com/photo-1663325265966-0d17de3e85c5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxpbmRpYW4lMjBzcGljZXMlMjBtYXJrZXRwbGFjZXxlbnwxfHx8fDE3NTg4MTExMjh8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      rating: 4.7,
-      reviews: 78,
-      category: "Spices",
-      isNew: false,
-      inStock: true,
-      description: "Premium blend of authentic South Indian spices"
-    },
-    {
-      id: '5',
-      name: "Ribbon Pakoda",
-      price: 249,
-      originalPrice: 299,
-      image: "https://images.unsplash.com/photo-1680359939304-7e27ee183e7a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx0cmFkaXRpb25hbCUyMGluZGlhbiUyMHNuYWNrcyUyMG11cnVra3V8ZW58MXx8fHwxNzU4NzM3NzY1fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      rating: 4.5,
-      reviews: 92,
-      category: "Traditional Snacks",
-      isNew: false,
-      inStock: true,
-      description: "Delicate ribbon-shaped gram flour snack with perfect crunch"
-    },
-    {
-      id: '6',
-      name: "Kai Murukku",
-      price: 329,
-      originalPrice: 379,
-      image: "https://images.unsplash.com/photo-1573890607045-678f0f9d2cf0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzb3V0aCUyMGluZGlhbiUyMGZvb2QlMjBmYW1pbHklMjBoZXJpdGFnZXxlbnwxfHx8fDE3NTg3Mzc4MzV8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      rating: 4.9,
-      reviews: 134,
-      category: "Traditional Snacks",
-      isNew: true,
-      inStock: false,
-      description: "Hand-twisted murukku with extra flavor and crispiness"
-    },
-    {
-      id: '7',
-      name: "Thenkuzhal",
-      price: 279,
-      originalPrice: 319,
-      image: "https://images.unsplash.com/photo-1723155182094-af2f63472d0b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxpbmRpYW4lMjBzcGljZXMlMjBpbmdyZWRpZW50cyUyMG5hdHVyYWx8ZW58MXx8fHwxNzU4NzM3NzY2fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      rating: 4.6,
-      reviews: 67,
-      category: "Traditional Snacks",
-      isNew: false,
-      inStock: true,
-      description: "Coconut-flavored crispy snack with traditional preparation"
-    },
-    {
-      id: '8',
-      name: "Festival Mix",
-      price: 399,
-      originalPrice: 449,
-      image: "https://images.unsplash.com/photo-1616813769023-d0557572ddbe?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx0cmFkaXRpb25hbCUyMGluZGlhbiUyMG5hbWtlZW4lMjBzbmFja3N8ZW58MXx8fHwxNzU4ODExMTI4fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      rating: 4.8,
-      reviews: 103,
-      category: "Namkeen",
-      isNew: false,
-      inStock: true,
-      description: "Special blend of various traditional snacks for celebrations"
-    }
-  ];
 
   const categories = ["All", "Traditional Snacks", "Sweets", "Namkeen", "Spices"];
 
@@ -184,7 +85,7 @@ export function ProductsPage({ onNavigate }: ProductsPageProps) {
   const ProductCard = ({ product }: { product: typeof products[0]; index: number }) => {
     if (viewMode === 'list') {
       return (
-        <Card 
+        <Card
           className="group border-amber-200 hover:shadow-lg transition-all duration-300 cursor-pointer"
           onClick={() => onNavigate('product', product.id.toString())}
         >
@@ -207,7 +108,7 @@ export function ProductsPage({ onNavigate }: ProductsPageProps) {
                   className="w-32 h-32 object-cover rounded-lg group-hover:scale-105 transition-transform duration-300"
                 />
               </div>
-              
+
               <div className="flex-1 space-y-3">
                 <div>
                   <div className="flex items-start justify-between">
@@ -220,19 +121,19 @@ export function ProductsPage({ onNavigate }: ProductsPageProps) {
                   </div>
                   <p className="text-gray-600 mt-1">{product.description}</p>
                 </div>
-                
+
                 <div className="flex items-center gap-2">
                   <div className="flex items-center gap-1">
                     {[...Array(5)].map((_, i) => (
-                      <Star 
-                        key={i} 
+                      <Star
+                        key={i}
                         className={`w-4 h-4 ${i < Math.floor(product.rating) ? 'text-amber-400 fill-current' : 'text-gray-300'}`}
                       />
                     ))}
                   </div>
                   <span className="text-sm text-gray-600">({product.reviews})</span>
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span className="text-2xl text-amber-900">SGD{product.price}</span>
@@ -241,8 +142,8 @@ export function ProductsPage({ onNavigate }: ProductsPageProps) {
                       {Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}% OFF
                     </Badge>
                   </div>
-                  
-                  <Button 
+
+                  <Button
                     className="bg-amber-600 hover:bg-amber-700 text-white"
                     disabled={!product.inStock}
                   >
@@ -257,7 +158,7 @@ export function ProductsPage({ onNavigate }: ProductsPageProps) {
     }
 
     return (
-      <Card 
+      <Card
         className="group border-amber-200 hover:shadow-lg transition-all duration-300 cursor-pointer hover:scale-105"
         onClick={() => onNavigate('product', product.id.toString())}
       >
@@ -279,7 +180,7 @@ export function ProductsPage({ onNavigate }: ProductsPageProps) {
               className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
             />
           </div>
-          
+
           <div className="p-4 space-y-3">
             <div>
               <Badge variant="secondary" className="bg-amber-100 text-amber-800 text-xs mb-2">
@@ -290,22 +191,22 @@ export function ProductsPage({ onNavigate }: ProductsPageProps) {
               </h3>
               <div className="flex items-center gap-1 mt-1">
                 {[...Array(5)].map((_, i) => (
-                  <Star 
-                    key={i} 
+                  <Star
+                    key={i}
                     className={`w-4 h-4 ${i < Math.floor(product.rating) ? 'text-amber-400 fill-current' : 'text-gray-300'}`}
                   />
                 ))}
                 <span className="text-sm text-gray-600 ml-1">({product.reviews})</span>
               </div>
             </div>
-            
+
             <div className="space-y-2">
               <div className="flex items-center gap-2">
                 <span className="text-lg text-amber-900">₹{product.price}</span>
                 <span className="text-sm text-gray-500 line-through">₹{product.originalPrice}</span>
               </div>
-              
-              <Button 
+
+              <Button
                 className="w-full bg-amber-600 hover:bg-amber-700 text-white transition-colors"
                 size="sm"
                 disabled={!product.inStock}
@@ -352,8 +253,8 @@ export function ProductsPage({ onNavigate }: ProductsPageProps) {
                   {categories.map((category) => (
                     <div key={category} className="flex items-center space-x-2">
                       <Checkbox id={category} />
-                      <label 
-                        htmlFor={category} 
+                      <label
+                        htmlFor={category}
                         className="text-sm text-gray-700 cursor-pointer hover:text-amber-600"
                       >
                         {category}
@@ -406,6 +307,12 @@ export function ProductsPage({ onNavigate }: ProductsPageProps) {
 
           {/* Main Content */}
           <div className="flex-1">
+            {error && (
+              <div className="bg-red-50 text-red-600 p-4 rounded-lg mb-6 border border-red-200">
+                <p>Error: {error}</p>
+                <p className="text-sm mt-2 text-gray-700">Please check the console for more details.</p>
+              </div>
+            )}
             {/* Controls Bar */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
               <div className="flex items-center gap-4">
@@ -422,7 +329,7 @@ export function ProductsPage({ onNavigate }: ProductsPageProps) {
                   Showing {products.length} products
                 </p>
               </div>
-              
+
               <div className="flex items-center gap-4">
                 <Select defaultValue="featured">
                   <SelectTrigger className="w-[180px] border-amber-200">
@@ -436,7 +343,7 @@ export function ProductsPage({ onNavigate }: ProductsPageProps) {
                     <SelectItem value="newest">Newest</SelectItem>
                   </SelectContent>
                 </Select>
-                
+
                 <div className="flex border border-amber-200 rounded-md">
                   <Button
                     variant={viewMode === 'grid' ? 'default' : 'ghost'}
@@ -459,15 +366,15 @@ export function ProductsPage({ onNavigate }: ProductsPageProps) {
             </div>
 
             {/* Products Grid/List */}
-            <motion.div 
+            <motion.div
               ref={productsRef}
               className={
-                viewMode === 'grid' 
-                  ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6' 
+                viewMode === 'grid'
+                  ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'
                   : 'space-y-4'
               }
-              initial="hidden"
-              animate={productsInView ? "visible" : "hidden"}
+              initial="visible"
+              animate="visible"
               variants={staggerContainer}
             >
               {products.map((product, index) => (
